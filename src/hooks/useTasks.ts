@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Task, TaskFormData, Priority, Status } from "@/types/task";
-import { getTasks, createTask, updateTask, deleteTask } from "@/services/task.service";
+import { Task, TaskFormData, Priority, Status, Subtask } from "@/types/task";
+import { getTasks, createTask, updateTask, updateSubtasks, deleteTask } from "@/services/task.service";
 
 export type FilterPriority = Priority | "todas";
 export type FilterStatus = Status | "todas";
@@ -44,6 +44,13 @@ export function useTasks(userId: string | undefined) {
     );
   }
 
+  async function updateSubtasksLocal(id: string, subtasks: Subtask[]) {
+    await updateSubtasks(id, subtasks);
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, subtasks, updatedAt: new Date() } : t))
+    );
+  }
+
   async function remove(id: string) {
     await deleteTask(id);
     setTasks((prev) => prev.filter((t) => t.id !== id));
@@ -64,6 +71,6 @@ export function useTasks(userId: string | undefined) {
     filterPriority, setFilterPriority,
     filterStatus, setFilterStatus,
     search, setSearch,
-    create, update, remove, reload: load,
+    create, update, updateSubtasks: updateSubtasksLocal, remove, reload: load,
   };
 }

@@ -12,7 +12,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Task, TaskFormData } from "@/types/task";
+import { Task, TaskFormData, Subtask } from "@/types/task";
 
 const COL = "tasks";
 
@@ -25,6 +25,7 @@ function fromFirestore(id: string, data: Record<string, any>): Task {
     priority: data.priority,
     status: data.status,
     dueDate: data.dueDate,
+    subtasks: data.subtasks ?? [],
     createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
     updatedAt: (data.updatedAt as Timestamp)?.toDate() ?? new Date(),
   };
@@ -44,6 +45,7 @@ export async function createTask(userId: string, data: TaskFormData): Promise<Ta
   const ref = await addDoc(collection(db, COL), {
     userId,
     ...data,
+    subtasks: data.subtasks ?? [],
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -51,6 +53,7 @@ export async function createTask(userId: string, data: TaskFormData): Promise<Ta
     id: ref.id,
     userId,
     ...data,
+    subtasks: data.subtasks ?? [],
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -58,6 +61,10 @@ export async function createTask(userId: string, data: TaskFormData): Promise<Ta
 
 export async function updateTask(id: string, data: Partial<TaskFormData>): Promise<void> {
   await updateDoc(doc(db, COL, id), { ...data, updatedAt: serverTimestamp() });
+}
+
+export async function updateSubtasks(id: string, subtasks: Subtask[]): Promise<void> {
+  await updateDoc(doc(db, COL, id), { subtasks, updatedAt: serverTimestamp() });
 }
 
 export async function deleteTask(id: string): Promise<void> {

@@ -10,6 +10,7 @@ import {
   loginWithGithub,
   logout,
   mapFirebaseError,
+  deleteAccount
 } from "@/services/auth.service";
 
 export function useAuthActions() {
@@ -30,7 +31,7 @@ export function useAuthActions() {
     setError(null);
     try {
       await registerWithEmail(name, email, password);
-      return true; // caller shows "verify email" message
+      return true;
     } catch (err) {
       setError(mapFirebaseError(err as AuthError));
       return false;
@@ -93,6 +94,22 @@ export function useAuthActions() {
     router.push("/login");
   }
 
+  async function handleDeleteAccountAction(password?: string): Promise<boolean> {
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteAccount(password);
+      router.push("/");
+      return true;
+    } catch (err) {
+      console.error("Erro ao apagar conta:", err);
+      setError(mapFirebaseError(err as AuthError));
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     loading,
     error,
@@ -102,5 +119,6 @@ export function useAuthActions() {
     handleGoogleLogin,
     handleGithubLogin,
     handleLogout,
+    handleDeleteAccountAction
   };
 }

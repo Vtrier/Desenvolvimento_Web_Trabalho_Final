@@ -1,21 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X, Loader2 } from "lucide-react";
 import { taskSchema, TaskSchema } from "@/lib/validations";
-import { Task } from "@/types/task";
+import { Task, Subtask } from "@/types/task";
 import InputField from "@/components/auth/InputField";
+import SubtaskList from "./SubtaskList";
 
 interface Props {
   task?: Task;
-  onSubmit: (data: TaskSchema) => Promise<void>;
+  onSubmit: (data: TaskSchema, subtasks: Subtask[]) => Promise<void>;
   onClose: () => void;
   loading: boolean;
 }
 
 export default function TaskForm({ task, onSubmit, onClose, loading }: Props) {
+  const [subtasks, setSubtasks] = useState<Subtask[]>(task?.subtasks ?? []);
+
   const {
     register,
     handleSubmit,
@@ -41,10 +44,13 @@ export default function TaskForm({ task, onSubmit, onClose, loading }: Props) {
         status: task.status,
         dueDate: task.dueDate,
       });
+      setSubtasks(task.subtasks ?? []);
     }
   }, [task, reset]);
 
-  const isEdit = !!task;
+  async function handleFormSubmit(data: TaskSchema) {
+    await onSubmit(data, subtasks);
+  }
 
   return (
     <div
@@ -53,19 +59,20 @@ export default function TaskForm({ task, onSubmit, onClose, loading }: Props) {
       aria-modal="true"
       aria-labelledby="task-form-title"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-900 shadow-2xl p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-900 shadow-2xl p-6 flex flex-col gap-5 max-h-[92vh] overflow-y-auto">
 
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 id="task-form-title" className="text-base font-semibold text-white">
-            {isEdit ? "Editar tarefa" : "Nova tarefa"}
+            {task ? "Editar tarefa" : "Nova tarefa"}
           </h2>
           <button onClick={onClose} aria-label="Fechar" className="text-slate-500 hover:text-slate-300 transition-colors">
             <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} noValidate className="flex flex-col gap-4">
+
           {/* Título */}
           <InputField
             label="Título"
@@ -107,9 +114,9 @@ export default function TaskForm({ task, onSubmit, onClose, loading }: Props) {
                 className="w-full px-4 py-3 rounded-xl text-sm text-slate-100 bg-slate-800 border border-white/10 hover:border-white/20 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all"
                 {...register("status")}
               >
-                <option value="pendente">Pendente</option>
-                <option value="em_progresso">Em progresso</option>
-                <option value="concluida">Concluída</option>
+                <option value="pendente">⏳ Pendente</option>
+                <option value="em_progresso">🔄 Em progresso</option>
+                <option value="concluida">✅ Concluída</option>
               </select>
               {errors.status && <p className="text-xs text-red-400">{errors.status.message}</p>}
             </div>
@@ -126,8 +133,21 @@ export default function TaskForm({ task, onSubmit, onClose, loading }: Props) {
             {errors.dueDate && <p className="text-xs text-red-400">{errors.dueDate.message}</p>}
           </div>
 
+          {/* Subtarefas */}
+          <div className="flex flex-col gap-2 pt-1 border-t border-white/5">
+            <label className="text-sm font-medium text-slate-300">
+              Subtarefas
+              {subtasks.length > 0 && (
+                <span className="ml-2 text-xs font-normal text-slate-500">
+                  {subtasks.filter((s) => s.completed).length}/{subtasks.length} concluídas
+                </span>
+              )}
+            </label>
+            <SubtaskList subtasks={subtasks} onChange={setSubtasks} />
+          </div>
+
           {/* Botões */}
-          <div className="flex gap-3 pt-1">
+          <div className="flex gap-3 pt-2 border-t border-white/5">
             <button
               type="button"
               onClick={onClose}
@@ -141,7 +161,7 @@ export default function TaskForm({ task, onSubmit, onClose, loading }: Props) {
               className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading && <Loader2 size={15} className="animate-spin" />}
-              {isEdit ? "Salvar alterações" : "Criar tarefa"}
+              {task ? "Salvar alterações" : "Criar tarefa"}
             </button>
           </div>
         </form>
