@@ -47,7 +47,7 @@ export default function SubtaskList({ subtasks, onChange, readOnly = false }: Pr
   return (
     <div className="flex flex-col gap-3">
 
-      {/* Progress bar — só aparece se tiver subtarefas */}
+      {/* Progress bar */}
       {subtasks.length > 0 && (
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs">

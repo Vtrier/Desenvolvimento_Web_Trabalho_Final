@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import { useAuthActions } from "@/hooks/useAuthActions";
-import { useAuth } from "@/contexts/AuthContext"; // Para sabermos qual o provider
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   CheckSquare, LayoutDashboard, ClipboardList, Kanban, 
   Calendar, Trash2, LogOut, X, Loader2, AlertCircle
@@ -13,14 +13,13 @@ import {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user } = useAuth(); // Precisamos do user para saber se ele fez login por password
+  const { user } = useAuth();
   const { handleLogout, handleDeleteAccountAction, error } = useAuthActions(); 
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const [password, setPassword] = useState(""); // Novo estado para a palavra-passe
+  const [password, setPassword] = useState("");
 
-  // Verifica se o utilizador fez login com email e palavra-passe
   const isPasswordUser = user?.providerData.some(p => p.providerId === "password");
 
   const navLinks = [
@@ -33,7 +32,6 @@ export default function Navbar() {
   async function handleDeleteAccount() {
     setLoadingDelete(true);
     try {
-      // Passa a palavra-passe apenas se for utilizador de email
       const success = await handleDeleteAccountAction(isPasswordUser ? password : undefined);
       if (success) {
         setShowDeleteModal(false);

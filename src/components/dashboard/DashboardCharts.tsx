@@ -34,7 +34,6 @@ function EmptyChart({ message }: { message: string }) {
   );
 }
 
-// Wrapper com fundo escuro e texto claro — substitui o Card do Tremor
 function ChartCard({ title, children, fullWidth = false }: { title: string; children: React.ReactNode; fullWidth?: boolean }) {
   return (
     <div className={`rounded-2xl border border-white/10 bg-slate-900/60 p-5 ${fullWidth ? "lg:col-span-2" : ""}`}>
@@ -92,7 +91,6 @@ export default function DashboardCharts({ tasks }: Props) {
     };
   });
 
-  // Classes Tremor para forçar texto claro em fundo escuro
   const tremorText = {
     className: "text-slate-300",
   };

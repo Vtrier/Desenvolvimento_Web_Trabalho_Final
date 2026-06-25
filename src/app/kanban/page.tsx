@@ -56,7 +56,6 @@ export default function KanbanPage() {
     setLocalTasks(allTasks);
   }, [allTasks]);
 
-  // Sensors — MouseSensor + TouchSensor são mais confiáveis que PointerSensor
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: { distance: 5 },

@@ -99,7 +99,7 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onSub
         </p>
       )}
 
-      {/* Progress bar — sempre visível se tiver subtarefas */}
+      {/* Progress bar */}
       {hasSubtasks && (
         <div className="mt-3 mb-1 flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs">

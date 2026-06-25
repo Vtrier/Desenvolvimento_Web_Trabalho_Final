@@ -463,3 +463,23 @@ body {
   background-color: var(--bg-base);
   color: var(--text-primary);
 }
+
+div[vw] {
+  position: fixed !important;
+  z-index: 9999 !important;
+  bottom: 20px;
+  right: 20px;
+}
+
+div[vw-access-button] {
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+div[vw-plugin-wrapper] {
+  z-index: 9999 !important;
+}
+
+.vw-plugin-top-wrapper {
+  z-index: 9999 !important;
+}
