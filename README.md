@@ -270,6 +270,6 @@ src/
 
 ---
 
-## Licença
+## Feito por:
 
-Projeto acadêmico desenvolvido para fins educacionais.
+João Bernardo Porto, João Gabriel de Araújo e Vítor Hugo Trierveiler
